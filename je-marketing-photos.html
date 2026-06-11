@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Journey Electric — Marketing Photos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0f0f0f;
+      --yellow: #F5C518;
+      --yellow-dark: #d9ad00;
+      --grey-bg: #f7f7f5;
+      --grey-line: #e0e0dc;
+      --grey-text: #888;
+      --white: #ffffff;
+      --radius: 10px;
+      --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--grey-bg);
+      color: var(--black);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--black);
+      padding: 20px 24px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-bolt {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    header span {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--yellow);
+      letter-spacing: 0.02em;
+    }
+
+    .container {
+      flex: 1;
+      padding: 28px 20px 48px;
+      max-width: 520px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .page-sub {
+      font-size: 14px;
+      color: var(--grey-text);
+      margin-bottom: 28px;
+    }
+
+    /* Auth screen */
+    #auth-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 0;
+      text-align: center;
+    }
+
+    #auth-screen .auth-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    #auth-screen p {
+      font-size: 14px;
+      color: var(--grey-text);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* Photo upload area */
+    .photo-zone {
+      border: 2px dashed var(--grey-line);
+      border-radius: var(--radius);
+      background: var(--white);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .photo-zone:hover, .photo-zone.dragover {
+      border-color: var(--yellow);
+      background: #fffde8;
+    }
+
+    .photo-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .photo-zone .zone-icon { font-size: 36px; margin-bottom: 8px; }
+    .photo-zone .zone-label { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .photo-zone .zone-sub { font-size: 13px; color: var(--grey-text); }
+
+    .preview-wrap {
+      position: relative;
+      margin-bottom: 20px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    .preview-wrap img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      display: block;
+      opacity: 0.92;
+    }
+
+    .preview-clear {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.65);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Form fields */
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--grey-text);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 1.5px solid var(--grey-line);
+      border-radius: var(--radius);
+      padding: 13px 14px;
+      font-size: 15px;
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--black);
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--yellow);
+    }
+
+    textarea {
+      resize: none;
+      height: 100px;
+      line-height: 1.5;
+    }
+
+    .date-display {
+      width: 100%;
+      border: 1.5px solid var(--grey-line);
+      border-radius: var(--radius);
+      padding: 13px 14px;
+      font-size: 15px;
+      background: #f0f0ee;
+      color: var(--grey-text);
+    }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%;
+      background: var(--yellow);
+      color: var(--black);
+      border: none;
+      border-radius: var(--radius);
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: var(--font);
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-appearance: none;
+    }
+
+    .btn-submit:hover { background: var(--yellow-dark); }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { background: #ddd; color: #aaa; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      width: 100%;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: opacity 0.15s;
+      -webkit-appearance: none;
+    }
+    .btn-secondary:hover { opacity: 0.85; }
+
+    /* Status messages */
+    .status {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+    }
+    .status.error { background: #fee; color: #c00; border: 1px solid #fcc; display: block; }
+    .status.loading { background: #fff9d6; color: #7a6000; border: 1px solid #f5c518; display: block; }
+    .status.success { background: #efffed; color: #1a6e2e; border: 1px solid #a8e6b0; display: block; }
+
+    /* Success screen */
+    #success-screen {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+    }
+
+    #success-screen .success-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    #success-screen h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    #success-screen p {
+      font-size: 14px;
+      color: var(--grey-text);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #7a6000;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--grey-line);
+      margin: 24px 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <svg class="logo-bolt" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="16,2 6,16 13,16 12,26 22,12 15,12" fill="#F5C518"/>
+  </svg>
+  <h1>Journey Electric <span>/ Marketing</span></h1>
+</header>
+
+<div class="container">
+
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen">
+    <div class="auth-icon">🔐</div>
+    <div class="page-title">Sign in to continue</div>
+    <p>Connect your Microsoft 365 account to upload photos directly to the Journey Electric OneDrive.</p>
+    <button class="btn-secondary" onclick="signIn()">Sign in with Microsoft</button>
+    <div id="auth-status" class="status"></div>
+  </div>
+
+  <!-- FORM SCREEN -->
+  <div id="form-screen" style="display:none;">
+    <div class="page-title">Add a photo</div>
+    <div class="page-sub">Photos go straight to the marketing folder — no storage on your phone needed.</div>
+
+    <!-- Photo upload -->
+    <div id="photo-zone" class="photo-zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+      <input type="file" accept="image/*" capture="environment" id="photo-input" onchange="handlePhoto(event)" />
+      <div class="zone-icon">📷</div>
+      <div class="zone-label">Take or choose a photo</div>
+      <div class="zone-sub">Tap to open your camera</div>
+    </div>
+
+    <div id="preview-wrap" class="preview-wrap" style="display:none;">
+      <img id="preview-img" src="" alt="Preview" />
+      <button class="preview-clear" onclick="clearPhoto()" title="Remove photo">✕</button>
+    </div>
+
+    <!-- Fields -->
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" id="field-name" placeholder="e.g. Adam Biggar" autocomplete="name" />
+    </div>
+
+    <div class="field">
+      <label>Job site</label>
+      <input type="text" id="field-jobsite" placeholder="e.g. White Forest Homes – Lot 14" />
+    </div>
+
+    <div class="field">
+      <label>Description</label>
+      <textarea id="field-desc" placeholder="Describe what's in the photo — what was installed, what stage of the job, anything worth noting."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Date</label>
+      <div class="date-display" id="date-display"></div>
+    </div>
+
+    <button class="btn-submit" id="submit-btn" onclick="submitPhoto()">Upload photo</button>
+    <div id="form-status" class="status"></div>
+  </div>
+
+  <!-- SUCCESS SCREEN -->
+  <div id="success-screen">
+    <div class="success-icon">⚡</div>
+    <h2>Photo uploaded!</h2>
+    <p>It's saved to the Marketing Photos folder in OneDrive. Dave and Casey have been notified.</p>
+    <button class="btn-submit" onclick="resetForm()">Add another photo</button>
+  </div>
+
+</div>
+
+<script>
+  // ─── CONFIG ──────────────────────────────────────────────────────────────────
+  const CLIENT_ID = 'YOUR_AZURE_APP_CLIENT_ID'; // Replace with Azure App Registration Client ID
+  const REDIRECT_URI = window.location.href.split('?')[0].split('#')[0];
+  const SCOPES = ['Files.ReadWrite', 'Mail.Send', 'User.Read'];
+  const ONEDRIVE_FOLDER = 'Marketing Photos';
+  const NOTIFY_EMAILS = ['dave@journeyelectric.ca', 'edmin@journeyelectric.ca'];
+
+  // ─── STATE ───────────────────────────────────────────────────────────────────
+  let accessToken = null;
+  let selectedFile = null;
+
+  // ─── INIT ────────────────────────────────────────────────────────────────────
+  window.onload = () => {
+    setDateDisplay();
+    handleAuthRedirect();
+  };
+
+  function setDateDisplay() {
+    const now = new Date();
+    document.getElementById('date-display').textContent =
+      now.toLocaleDateString('en-CA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  // ─── AUTH (MSAL implicit / token in hash) ────────────────────────────────────
+  function signIn() {
+    const authUrl =
+      `https://login.microsoftonline.com/common/oauth2/v2.0/authorize` +
+      `?client_id=${CLIENT_ID}` +
+      `&response_type=token` +
+      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+      `&scope=${encodeURIComponent(SCOPES.join(' '))}` +
+      `&response_mode=fragment`;
+    window.location.href = authUrl;
+  }
+
+  function handleAuthRedirect() {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const token = params.get('access_token');
+    if (token) {
+      accessToken = token;
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showForm();
+    } else {
+      showAuth();
+    }
+  }
+
+  function showAuth() {
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('form-screen').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'none';
+  }
+
+  function showForm() {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('form-screen').style.display = 'block';
+    document.getElementById('success-screen').style.display = 'none';
+  }
+
+  // ─── PHOTO HANDLING ──────────────────────────────────────────────────────────
+  function handlePhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    loadPreview(file);
+  }
+
+  function loadPreview(file) {
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('preview-img').src = e.target.result;
+      document.getElementById('photo-zone').style.display = 'none';
+      document.getElementById('preview-wrap').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearPhoto() {
+    selectedFile = null;
+    document.getElementById('photo-input').value = '';
+    document.getElementById('preview-img').src = '';
+    document.getElementById('photo-zone').style.display = 'block';
+    document.getElementById('preview-wrap').style.display = 'none';
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('photo-zone').classList.add('dragover');
+  }
+
+  function handleDragLeave() {
+    document.getElementById('photo-zone').classList.remove('dragover');
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('photo-zone').classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) loadPreview(file);
+  }
+
+  // ─── SUBMIT ──────────────────────────────────────────────────────────────────
+  async function submitPhoto() {
+    const name = document.getElementById('field-name').value.trim();
+    const jobsite = document.getElementById('field-jobsite').value.trim();
+    const desc = document.getElementById('field-desc').value.trim();
+    const statusEl = document.getElementById('form-status');
+    const btn = document.getElementById('submit-btn');
+
+    if (!selectedFile) return showError(statusEl, 'Please select a photo first.');
+    if (!name) return showError(statusEl, 'Please enter your name.');
+    if (!jobsite) return showError(statusEl, 'Please enter the job site name.');
+    if (!desc) return showError(statusEl, 'Please add a description.');
+
+    btn.disabled = true;
+    showLoading(statusEl, 'Uploading photo to OneDrive…');
+
+    try {
+      // Build filename: YYYY-MM-DD_Name_JobSite.jpg
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const safeName = name.replace(/[^a-zA-Z0-9]/g, '-');
+      const safeJob = jobsite.replace(/[^a-zA-Z0-9]/g, '-');
+      const ext = selectedFile.name.split('.').pop() || 'jpg';
+      const filename = `${dateStr}_${safeName}_${safeJob}.${ext}`;
+
+      // 1. Ensure folder exists
+      await ensureFolder();
+
+      // 2. Upload file
+      showLoading(statusEl, 'Uploading photo…');
+      await uploadFile(filename);
+
+      // 3. Send email alert
+      showLoading(statusEl, 'Sending notification…');
+      await sendEmailAlert(name, jobsite, desc, dateStr, filename);
+
+      // Done!
+      document.getElementById('form-screen').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+
+    } catch (err) {
+      console.error(err);
+      showError(statusEl, `Upload failed: ${err.message}. Please try again.`);
+      btn.disabled = false;
+    }
+  }
+
+  async function ensureFolder() {
+    const res = await fetch(
+      `https://graph.microsoft.com/v1.0/me/drive/root:/${ONEDRIVE_FOLDER}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    if (res.status === 404) {
+      // Create folder
+      const createRes = await fetch(
+        `https://graph.microsoft.com/v1.0/me/drive/root/children`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: ONEDRIVE_FOLDER,
+            folder: {},
+            '@microsoft.graph.conflictBehavior': 'rename'
+          })
+        }
+      );
+      if (!createRes.ok) throw new Error('Could not create Marketing Photos folder.');
+    } else if (!res.ok) {
+      throw new Error('Could not access OneDrive.');
+    }
+  }
+
+  async function uploadFile(filename) {
+    const uploadRes = await fetch(
+      `https://graph.microsoft.com/v1.0/me/drive/root:/${ONEDRIVE_FOLDER}/${filename}:/content`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': selectedFile.type || 'image/jpeg'
+        },
+        body: selectedFile
+      }
+    );
+    if (!uploadRes.ok) {
+      const err = await uploadRes.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'File upload failed.');
+    }
+  }
+
+  async function sendEmailAlert(name, jobsite, desc, dateStr, filename) {
+    const toRecipients = NOTIFY_EMAILS.map(email => ({
+      emailAddress: { address: email }
+    }));
+
+    const emailBody = `
+      <div style="font-family: Helvetica Neue, Arial, sans-serif; max-width: 520px; color: #0f0f0f;">
+        <div style="background:#0f0f0f; padding: 18px 24px; border-radius: 8px 8px 0 0;">
+          <span style="color:#F5C518; font-size:18px; font-weight:700; letter-spacing:0.04em;">⚡ JOURNEY ELECTRIC</span>
+        </div>
+        <div style="border: 1px solid #e0e0dc; border-top: none; border-radius: 0 0 8px 8px; padding: 24px;">
+          <h2 style="font-size:18px; margin-bottom:16px;">New marketing photo added</h2>
+          <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <tr><td style="padding:8px 0; color:#888; width:90px;">From</td><td style="padding:8px 0; font-weight:600;">${name}</td></tr>
+            <tr style="border-top:1px solid #f0f0ee;"><td style="padding:8px 0; color:#888;">Job site</td><td style="padding:8px 0;">${jobsite}</td></tr>
+            <tr style="border-top:1px solid #f0f0ee;"><td style="padding:8px 0; color:#888;">Date</td><td style="padding:8px 0;">${dateStr}</td></tr>
+            <tr style="border-top:1px solid #f0f0ee;"><td style="padding:8px 0; color:#888; vertical-align:top; padding-top:10px;">Description</td><td style="padding:8px 0; line-height:1.5;">${desc}</td></tr>
+            <tr style="border-top:1px solid #f0f0ee;"><td style="padding:8px 0; color:#888;">File</td><td style="padding:8px 0; font-size:12px; color:#555;">${filename}</td></tr>
+          </table>
+          <p style="margin-top:20px; font-size:13px; color:#888;">Find the photo in <strong>OneDrive → Marketing Photos</strong>.</p>
+        </div>
+      </div>
+    `;
+
+    const mailRes = await fetch(
+      `https://graph.microsoft.com/v1.0/me/sendMail`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: {
+            subject: 'New Marketing Photo Added by Your Team',
+            body: { contentType: 'HTML', content: emailBody },
+            toRecipients
+          },
+          saveToSentItems: false
+        })
+      }
+    );
+    if (!mailRes.ok) {
+      const err = await mailRes.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'Email notification failed.');
+    }
+  }
+
+  // ─── RESET ───────────────────────────────────────────────────────────────────
+  function resetForm() {
+    clearPhoto();
+    document.getElementById('field-name').value = '';
+    document.getElementById('field-jobsite').value = '';
+    document.getElementById('field-desc').value = '';
+    document.getElementById('form-status').style.display = 'none';
+    document.getElementById('submit-btn').disabled = false;
+    setDateDisplay();
+    showForm();
+  }
+
+  // ─── HELPERS ─────────────────────────────────────────────────────────────────
+  function showError(el, msg) {
+    el.className = 'status error';
+    el.textContent = msg;
+  }
+
+  function showLoading(el, msg) {
+    el.className = 'status loading';
+    el.innerHTML = `<span class="spinner"></span>${msg}`;
+  }
+</script>
+</body>
+</html>
